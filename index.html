@@ -14,6 +14,77 @@
         box-sizing: border-box;
       }
 
+      :root {
+        --bar-width: 30px;
+        --bar-height: 2px;
+        --hamburger-gap: 6px;
+        --animation-timing: 200ms ease-in-out;
+        --hamburger-height: calc(
+          var(--bar-height) * 3 + var(--hamburger-gap) * 2
+        );
+      }
+
+      @media (max-width: 768px) {
+        #header-right * {
+          display: none;
+        }
+      }
+
+      @media (min-width: 768px) {
+        #mobile-header {
+          display: none;
+        }
+      }
+
+      .hamburger-menu {
+        --x-width: calc(var(--hamburger-height) * 1.41421356237);
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--hamburger-gap);
+
+        width: max-content;
+        cursor: pointer;
+      }
+
+      .hamburger-menu::before,
+      .hamburger-menu::after,
+      .hamburger-menu input {
+        content: "";
+        width: var(--bar-width);
+        height: var(--bar-height);
+        background-color: white;
+        border-radius: 9999px;
+        transform-origin: left center;
+        transition: all var(--animation-timing);
+      }
+
+      .hamburger-menu input {
+        appearance: none;
+        padding: 0;
+        margin: 0;
+        outline: none;
+        pointer-events: none;
+      }
+
+      .hamburger-menu:has(input:checked)::before {
+        rotate: 45deg;
+        width: var(--x-width);
+        translate: 0 calc(var(--bar-height) / -2);
+      }
+
+      .hamburger-menu:has(input:checked)::after {
+        rotate: -45deg;
+        width: var(--x-width);
+        translate: 0 calc(var(--bar-height) / 2);
+      }
+
+      .hamburger-menu input:checked {
+        opacity: 0;
+        width: 0;
+        translate: calc(var(--x-width) / 2) 0;
+      }
+
       body {
         margin: 0;
         font-family: "Mulish", sans-serif;
@@ -32,7 +103,7 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        z-index: 1;
+        z-index: 2;
       }
 
       #header-right {
@@ -44,7 +115,7 @@
       .header-link {
         color: white;
         text-decoration: none;
-        font-size: 2em;
+        font-size: 1.5em;
         display: flex;
         flex-direction: row;
       }
@@ -64,13 +135,89 @@
         align-self: center;
       }
 
-      #myVideo {
+      #video-container {
         position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      #myVideo {
+        min-width: 100%;
+        min-height: 100%;
+
+        width: auto;
+        height: auto;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        transform: translate(-50%, -50%);
+
+        z-index: -1;
+      }
+
+      .mobile-menu {
+        position: fixed;
         left: 0;
         top: 0;
-        min-height: 100%;
+        height: 100%;
         width: 100%;
-        z-index: -1;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+
+        padding-top: 30%;
+        padding-bottom: 30%;
+      }
+
+      #mobile-menu-icons {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .mobile-menu-link {
+        color: white;
+        text-decoration: none;
+        font-size: 1.5em;
+        display: flex;
+        flex-direction: row;
+      }
+
+      #mobile-menu-right > .mobile-menu-link {
+        margin-left: 24px;
+      }
+
+      #mobile-menu-right > .mobile-menu-link:hover {
+        text-decoration: underline;
+        text-decoration-thickness: from-font;
+        text-underline-offset: 6px;
+      }
+
+      .mobile-menu-img {
+        height: 1em;
+        align-self: center;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      #header:has(#mobile-header > .hamburger-menu > :not(input:checked))
+        + .mobile-menu {
+        display: none;
+      }
+
+      #header:has(#mobile-header > .hamburger-menu > input:checked)
+        > #header-left
+        > #main-logo {
+        color: white;
       }
 
       .content {
@@ -86,9 +233,11 @@
       }
 
       h1 {
-        font-size: 5em;
-        font-weight: 400;
+        font-size: 4.5em;
+        font-weight: 300;
         margin-bottom: 24px;
+        padding-right: 7.5%;
+        padding-left: 7.5%;
       }
 
       #bio {
@@ -98,6 +247,34 @@
         line-height: 1.5;
         margin-top: 0;
         margin-bottom: 2.5%;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 3.5em;
+        }
+
+        #bio {
+          font-size: 1em;
+        }
+      }
+
+      @media (max-width: 440px) {
+        h1 {
+          margin-top: 64px;
+          margin-bottom: 48px;
+          font-size: 2.5em;
+          padding-right: 0;
+          padding-left: 0;
+        }
+
+        #bio {
+          padding-left: 10%;
+          padding-right: 10%;
+          font-size: 1em;
+          line-height: 1.25;
+          margin-bottom: 48px;
+        }
       }
 
       #myBtn {
@@ -124,24 +301,79 @@
       <div id="header-right">
         <a class="header-link" href="index.html">Home</a
         ><a class="header-link" href="showreel.html">Showreel</a
-        ><a class="header-link" target="_blank" href="https://instagram.com/willclothierphoto"><img src="ig_logo_w.png" class="header-img"></img></a><a class="header-link" target="_blank" href="https://www.linkedin.com/in/will-clothier-a06543152/"><img style="border-radius: 8px;" src="li_logo_w.png" class="header-img"></img></a>
+        ><a
+          class="header-link"
+          target="_blank"
+          href="https://instagram.com/willclothierphoto"
+          ><img src="ig_logo_w.png" class="header-img" /></a
+        ><a
+          class="header-link"
+          target="_blank"
+          href="https://www.linkedin.com/in/will-clothier-a06543152/"
+          ><img
+            style="border-radius: 8px"
+            src="li_logo_w.png"
+            class="header-img"
+        /></a>
+      </div>
+      <div id="mobile-header">
+        <label class="hamburger-menu">
+          <input type="checkbox" />
+        </label>
       </div>
     </div>
 
-    <video autoplay muted loop id="myVideo" poster="placeholder.jpg">
-      <source src="web_reel.mp4" type="video/mp4" />
-      Your browser does not support HTML5 video.
-    </video>
+    <div
+      class="mobile-menu"
+      onclick="document.getElementById('hamburger-menu-trigger').checked = false;"
+    >
+      <a class="mobile-menu-link" href="index.html">Home</a
+      ><a class="mobile-menu-link" href="showreel.html">Showreel</a>
+      <div id="mobile-menu-icons">
+        <a
+          class="mobile-menu-link"
+          target="_blank"
+          href="https://instagram.com/willclothierphoto"
+          ><img src="ig_logo_w.png" class="mobile-menu-img" /></a
+        ><a
+          class="mobile-menu-link"
+          target="_blank"
+          href="https://www.linkedin.com/in/will-clothier-a06543152/"
+          ><img
+            style="border-radius: 8px"
+            src="li_logo_w.png"
+            class="mobile-menu-img"
+        /></a>
+      </div>
+    </div>
 
-    <div class="content">
-      <h1>Telling stories where people and wildlife meet...</h1>
-      <p id="bio">
-        I’m a Bristol-based documentary filmmaker telling stories about
-        wildlife, conservation, and our ever-changing relationship with nature.
-        My work looks at how people live with, protect, and depend on the
-        natural world - and what that means for our shared future.
-      </p>
-      <button id="myBtn" onclick="location.href='showreel.html';">Watch</button>
+    <div>
+      <div id="video-container">
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          id="myVideo"
+          poster="placeholder.jpg"
+        >
+          <source src="web_reel.mp4" type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <div class="content">
+        <h1>Telling stories where people and wildlife meet...</h1>
+        <p id="bio">
+          I’m a Bristol-based documentary filmmaker telling stories about
+          wildlife, conservation, and our ever-changing relationship with
+          nature. My work looks at how people live with, protect, and depend on
+          the natural world - and what that means for our shared future.
+        </p>
+        <button id="myBtn" onclick="location.href='showreel.html';">
+          Watch
+        </button>
+      </div>
     </div>
   </body>
 </html>
