@@ -162,6 +162,22 @@
         z-index: -1;
       }
 
+      #hero-video-fallback {
+        min-width: 100%;
+        min-height: 100%;
+
+        width: auto;
+        height: auto;
+
+        position: absolute;
+        top: 50%;
+        left: 50%;
+
+        transform: translate(-50%, -50%);
+
+        z-index: -1;
+      }
+
       .mobile-menu {
         position: fixed;
         left: 0;
@@ -294,7 +310,7 @@
       }
     </style>
   </head>
-  <body>
+  <body id="body">
     <div id="header">
       <div id="header-left">
         <a class="header-link" href="index.html">willclothierfilms</a>
@@ -362,6 +378,11 @@
           <source src="web_reel.mp4" type="video/mp4" />
           Your browser does not support HTML5 video.
         </video>
+        <img
+          id="hero-video-fallback"
+          style="display: none"
+          src="placeholder.jpg"
+        />
       </div>
 
       <div class="content">
@@ -377,5 +398,57 @@
         </button>
       </div>
     </div>
+
+    <script type="text/javascript">
+      Object.defineProperty(HTMLMediaElement.prototype, "playing", {
+        get: function () {
+          return !!(
+            this.currentTime > 0 &&
+            !this.paused &&
+            !this.ended &&
+            this.readyState > 2
+          );
+        },
+      });
+
+      const body = document.getElementById("body");
+      const videoElement = document.getElementById("myVideo");
+      const videoElementFallback = document.getElementById(
+        "hero-video-fallback"
+      );
+
+      var promise = videoElement.play();
+      if (promise !== undefined) {
+        promise
+          .catch((error) => {
+            // Auto-play was prevented
+            // Show a UI element to let the user manually start playback
+            if (error.name === "NotAllowedError") {
+              console.log("Low Power Mode Active");
+              videoElement.style.display = "none";
+              videoElementFallback.style.display = "block";
+            }
+          })
+          .then(() => {
+            // if there is no error, then we play the video
+            videoElement.play();
+          });
+      }
+
+      const handler = function () {
+        if (videoElement.playing) {
+          // video is already playing so do nothing
+        } else {
+          // video is not playing
+          // so play video now
+          videoElementFallback.style.display = "none";
+          videoElement.style.display = "block";
+          videoElement.play();
+        }
+      };
+
+      body.onclick = handler;
+      body.ontouchstart = handler;
+    </script>
   </body>
 </html>
